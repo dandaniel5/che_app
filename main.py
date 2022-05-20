@@ -63,10 +63,10 @@ def sendgame(chat_id, user_id):
     return (user_id)
 
 
-def sendGameUrl(callback_query_id, user_id):
+def sendGameUrl(callback_query_id, user_id, date):
     qurl = HOOKURL + 'answerCallbackQuery'
     print("sendGameUrl_user_id: ", user_id)
-    URL_GAME = Game_url + f'/gm/{user_id}/'
+    URL_GAME = Game_url + f'/gm/{user_id}/{date}/'
     answer = {'callback_query_id': callback_query_id, 'url': URL_GAME}
     print('answer=', answer)
     requests.post(qurl, json=answer)
@@ -85,15 +85,17 @@ def front_to_back():
     print('/chb')
     jj = request.get_json()
     print(jj)
-    day = []
-    for x in range(2, len(jj), 2):
-        day.append({'name': jj[x], 'vall': jj[x + 1]})
-    print(day)
+    id, date, *checkboxes = jj
+    print(f'{id=},{date=},{checkboxes=}')
+    checkboxes_4_mongo = []
+    for x in range(0, len(checkboxes), 2):
+        checkboxes_4_mongo.append({'name': checkboxes[x], 'vall': checkboxes[x + 1]})
+    print(checkboxes_4_mongo)
     # dayz=[]
     # for y in range(0, len(day),2):
     #     dayz.append({day[y]: day[y+1]})
     # print(dayz)
-    db.Users.update_one({"id": f"{jj[0]}"}, {"$set": {f"{jj[1]}": day}})
+    db.Users.update_one({"id": f"{id}"}, {"$set": {f"{date}": checkboxes_4_mongo}})
     # db.Users.find_one_and_update({"id": f"{jj[0]}"}, {"$set": {f"{jj[1]}": day}})
     print('ok')
     return jsonify({"status": "nice"})
@@ -106,7 +108,7 @@ def front_to_back():
     #     return render_template('index.html', list_val=jsonObject, list_val_len=len(jsonObject))
 
 
-@app.route('/gm/<int:user_id>/', methods=['GET', 'POST'])
+@app.route('/gm/<int:user_id>/<string:date>/', methods=['GET', 'POST'])
 def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"):
     print('-----------------')
     cursor = list((db.Users.find({"id": f"{user_id}"},
@@ -116,10 +118,14 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
     x = (calendar[date])
     print(x)
 
+    dates = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
+    print(dates)
+    date_0 = dates[0]
     list_val = []
     for checkbox in x:
         print({checkbox['name']}, {checkbox['vall']})
         list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
+
 
     # user = Users.parse_raw(find_by_user_id(user_id))
     # print('user=', user)
@@ -144,7 +150,8 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
     # # print(f'{fdate=}')
     # # print(list(day.checkboxes))
     # # print(len(days))
-    return render_template('index.html', list_val=list_val, list_val_len=len(list_val), date=date, user_id=user_id)
+    return render_template('index.html', list_val=list_val, list_val_len=len(list_val), dates=dates, date=date_0,
+                           user_id=user_id)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -153,6 +160,7 @@ def index():
     # global r
     r = request.get_json()
     print(r)
+
     if request.method == 'POST':
         if 'callback_query' in r:
             print('send url')
@@ -161,7 +169,10 @@ def index():
             print(callback_query_id)
             # update_id = r['update_id']
             user_id = r['callback_query']['from']['id']
-            sendGameUrl(callback_query_id, user_id)
+            # регуляркой дотсаем все даты из монго джейсона по юзер айди
+            date = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
+            sendGameUrl(callback_query_id, user_id, date[0])
+            return jsonify({"status": "nice"})
 
         elif 'message' in r:
             if r['message']['text'] == '/start':

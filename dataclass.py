@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from pydantic import BaseModel, ValidationError, fields
 from bson.json_util import dumps, ObjectId
-import json, os
+import json, os ,re
 from pymongo import MongoClient, errors
 
 os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
@@ -72,11 +72,20 @@ db = client.che_app
 # # print(len(list_val))
 # # print(x)
 #
-
-xx = [{'name': 'conect css', 'vall': 'unchecked'}, {'name': 'conect cggss', 'vall': 'unchecked'}]
-
-try:
-    db.Users.find_one_and_update({"id": "219045984"}, {"$set": {"2022-05-19": xx}})
-    # db.Users.find_one_and_update({"id": f"{jj[0]}" }, {"$set": {yy: day}})
-except Exception as e:
-    print(e)
+#
+# xx = [{'name': 'conect css', 'vall': 'unchecked'}, {'name': 'conect cggss', 'vall': 'unchecked'}]
+#
+# try:
+#     db.Users.find_one_and_update({"id": "219045984"}, {"$set": {"2022-05-19": xx}})
+#     # db.Users.find_one_and_update({"id": f"{jj[0]}" }, {"$set": {yy: day}})
+# except Exception as e:
+#     print(e)
+user_id = "219045984"
+# date = db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})
+# print(date)
+# data =[]
+# for x in date:
+#     data.append(x)
+# print(data)
+date = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
+print(date)
