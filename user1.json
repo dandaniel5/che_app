@@ -1,1 +1,1 @@
-{"id": 219045984, "days": [{"date": "2019-01-01", "conect mongo": true, "conect redis": false, "conect postgres": false}, {"date": "2019-01-02", "conect fast api": true, "conect django": false}, {"date": "2019-01-01", "conect new view": true}]}
+{"id": 219045984, "days": [{"date": "2019-01-02","checkboxes":[{"name":"conect css", "vall":"checked"},{"name":"conect jbl", "vall":"checked"}]},{"date": "2019-01-01","checkboxes":[{"name":"conect mongo", "vall": "checked"},{"name":"conect redis", "vall": "checked"}]}]}

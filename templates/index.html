@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}
@@ -5,9 +6,15 @@
 {% endblock %}
 {% block body %}
 <h3><p>
-<button onClick="window.location.reload();">🔄</button>
- Задачи на сегодня</p></h3>
+<button  type="button" class="btn btn-info" onClick="window.location.reload();"> 🔄 </button>
+ Задачи <p hidden id="theId">{{user_id}} </p> на сегодня - <p hidden id="theData">{{date}}</p>
+<button type="button" class="btn btn-outline-primary"> {{date}}</button>
+</p></h3>
+<br>
+<br>
+<br>
 {#<h3> class="text-center">{{list_val}}</h3>#}
+
 
 
 
@@ -44,8 +51,14 @@
 {% endfor %}
 
 
+<br>
+<!--<button type="button" class="btn btn-primary">Share score</button>-->
+<br>
+<!--<button  type="button" class="btn btn-primary" onClick="TelegramGameProxy.shareScore()">Share score</button>-->
 
-
+<div class="d-grid gap-2">
+  <button class="btn btn-primary" type="button" onClick="TelegramGameProxy.shareScore()" >Share score</button>
+</div>
 
 
 <!--<div class="form-check">-->
@@ -74,3 +87,4 @@
 <!--    </label><br>-->
 <!--{% endfor %}-->
 <!--{% endblock %}-->
+
