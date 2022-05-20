@@ -2,18 +2,40 @@
 {% extends 'base.html' %}
 
 {% block title %}
-
 {% endblock %}
 {% block body %}
-<h3><p>
-<button  type="button" class="btn btn-info" onClick="window.location.reload();"> 🔄 </button>
- Задачи <p hidden id="theId">{{user_id}} </p> на сегодня - <p hidden id="theData">{{date}}</p>
-<button type="button" class="btn btn-outline-primary"> {{date}}</button>
-</p></h3>
+<p hidden id="theId">{{user_id}}</p>
+<p hidden id="theData">{{date}}</p>
+
+
+<ul class="nav nav-fill">
+<!--  <li class="nav-item">-->
+<!--    <a class="nav-link active" aria-current="page" href="#">Active</a>-->
+<!--  </li>-->
+  <li class="nav-item">
+    <button  type="button" class="btn btn-info" onClick="window.location.reload();"> 🔄 </button>
+  </li>
+  <li class="nav-item">
+   <h3>    Задачи на сегодня    </h3>
+  </li>
+  <li class="nav-item">
+    <button type="button" class="btn btn-outline-primary">{{date}}</button></h3>
+  </li>
+</ul>
+
+
+
+
+
+
+
+
 <br>
+
+
+
 <br>
-<br>
-{#<h3> class="text-center">{{list_val}}</h3>#}
+<!--{#<h3> class="text-center">{{list_val}}</h3>#}-->
 
 
 

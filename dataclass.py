@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from pydantic import BaseModel, ValidationError, fields
 from bson.json_util import dumps, ObjectId
 import json, os
-from pymongo import MongoClient,errors
+from pymongo import MongoClient, errors
 
 os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
 client = MongoClient(os.environ['MONGODB_URI'])
@@ -42,10 +42,10 @@ db = client.che_app
 #     print(e)
 
 # print(data_user)
-days = {'conect css': 'unchecked'}, {'conect jbl': 'unchecked'}, {'random text 3': 'unchecked'}
-date = {"date": '2019-01-02'}
-user_id ={ "id": "219045984"}
-xxx = (json.dumps(days))
+# days = {'conect css': 'unchecked'}, {'conect jbl': 'unchecked'}, {'random text 3': 'unchecked'}
+# date = {"date": '2019-01-02'}
+# user_id = {"id": "219045984"}
+# xxx = (json.dumps(days))
 
 # col = db.users
 # cursor = col.find(id)
@@ -57,24 +57,26 @@ xxx = (json.dumps(days))
 # x=col.find({"id": 219045984})
 # cursor =
 
-date = "2022-04-18"
-cursor = list((db.Users.find({"id": "219045984"},
-                             {"id": 0, "_id": 0})))
-for cu in cursor:
-    calendar = cu
-x = (calendar[date])
-print((x))
+# date = "2022-05-17"
+# cursor = list((db.Users.find({"id": "219045984"},
+#                              {"id": 0, "_id": 0})))
+# for cu in cursor:
+#     calendar = cu
+# x = (calendar[date])
+# print((x))
+#
+# list_val = []
+# for checkbox in x:
+#     # print({checkbox['name']}, {checkbox['vall']})
+#     list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
+# # print(len(list_val))
+# # print(x)
+#
 
-list_val = []
-for checkbox in x:
-    # print({checkbox['name']}, {checkbox['vall']})
-    list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
-# print(len(list_val))
-# print(x)
-
-bb = "219045984"
+xx = [{'name': 'conect css', 'vall': 'unchecked'}, {'name': 'conect cggss', 'vall': 'unchecked'}]
 
 try:
-    db.Users.find_one_and_update({"id": bb}, {"$set": {date: "yzvyzv"}})
+    db.Users.find_one_and_update({"id": "219045984"}, {"$set": {"2022-05-19": xx}})
+    # db.Users.find_one_and_update({"id": f"{jj[0]}" }, {"$set": {yy: day}})
 except Exception as e:
     print(e)

@@ -8,7 +8,7 @@ from pymongo import MongoClient
 
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
 HOOKURL = 'https://api.telegram.org/bot' + TOKEN + '/'
-Game_url = "https://2856-2a01-540-5f1-6900-455d-c7cd-70-b848.ngrok.io"
+Game_url = "https://40e3-2a01-540-5f1-6900-14d4-c16c-bfa2-a56b.ngrok.io"
 game_short_name = 'checklist'
 r = json
 
@@ -53,7 +53,7 @@ db = client.che_app
 #     print(e)
 
 
-def sendGame(chat_id, user_id):
+def sendgame(chat_id, user_id):
     print('send gamestarted')
     qqurl = HOOKURL + 'sendGame'
     answer = {'chat_id': chat_id, 'game_short_name': game_short_name, 'cache_time': 20}
@@ -93,7 +93,9 @@ def front_to_back():
     # for y in range(0, len(day),2):
     #     dayz.append({day[y]: day[y+1]})
     # print(dayz)
-    db.Users.find_one_and_update({"id": f"{jj[0]}"}, {"$set": {f"{jj[1]}": day}})
+    db.Users.update_one({"id": f"{jj[0]}"}, {"$set": {f"{jj[1]}": day}})
+    # db.Users.find_one_and_update({"id": f"{jj[0]}"}, {"$set": {f"{jj[1]}": day}})
+    print('ok')
     return jsonify({"status": "nice"})
 
     # @app.route('/gm', methods=['GET', 'POST'])
@@ -104,12 +106,11 @@ def front_to_back():
     #     return render_template('index.html', list_val=jsonObject, list_val_len=len(jsonObject))
 
 
-
 @app.route('/gm/<int:user_id>/', methods=['GET', 'POST'])
-def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-18"):
+def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"):
     print('-----------------')
     cursor = list((db.Users.find({"id": f"{user_id}"},
-                                     {"id": 0, "_id": 0})))
+                                 {"id": 0, "_id": 0})))
     for cu in cursor:
         calendar = cu
     x = (calendar[date])
@@ -117,33 +118,34 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-18"
 
     list_val = []
     for checkbox in x:
-         print({checkbox['name']}, {checkbox['vall']})
-         list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
+        print({checkbox['name']}, {checkbox['vall']})
+        list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
 
-        # user = Users.parse_raw(find_by_user_id(user_id))
-        # print('user=', user)
-        # days = list(get_days_by_user_id(user_id))
-        # print(f'{days=}')
-        # for day in days:
-        #     print(f'{day=}')
-        #     if day.date == date:
-        #         fdate = day.date
-        #         print(f'{fdate=}')
-        #         checkboxes = day.checkboxes
-        # print(f'{checkboxes=}')
-        # print('----------------')
-        # # print(f'{checkboxes=}')
-        # list_val = []
-        # for checkbox in checkboxes:
-        #     print({f'{checkbox.name}:{checkbox.vall}'})
-        #     list_val.append({f'{checkbox.name}': f'{checkbox.vall}'})
-        #
-        # print(f'{list_val=}')
-        #
-        # # print(f'{fdate=}')
-        # # print(list(day.checkboxes))
-        # # print(len(days))
+    # user = Users.parse_raw(find_by_user_id(user_id))
+    # print('user=', user)
+    # days = list(get_days_by_user_id(user_id))
+    # print(f'{days=}')
+    # for day in days:
+    #     print(f'{day=}')
+    #     if day.date == date:
+    #         fdate = day.date
+    #         print(f'{fdate=}')
+    #         checkboxes = day.checkboxes
+    # print(f'{checkboxes=}')
+    # print('----------------')
+    # # print(f'{checkboxes=}')
+    # list_val = []
+    # for checkbox in checkboxes:
+    #     print({f'{checkbox.name}:{checkbox.vall}'})
+    #     list_val.append({f'{checkbox.name}': f'{checkbox.vall}'})
+    #
+    # print(f'{list_val=}')
+    #
+    # # print(f'{fdate=}')
+    # # print(list(day.checkboxes))
+    # # print(len(days))
     return render_template('index.html', list_val=list_val, list_val_len=len(list_val), date=date, user_id=user_id)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -167,8 +169,9 @@ def index():
                 print('send game')
                 user_id = r['message']['from']['id']
                 # print(r)
-                sendGame(chat_id, user_id)
+                sendgame(chat_id, user_id)
     return render_template("base.html")
+
 
 if __name__ == '__main__':
     wurl = HOOKURL + 'setWebhook?url=' + Game_url
