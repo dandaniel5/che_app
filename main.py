@@ -120,7 +120,17 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
 
     dates = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
     print(dates)
-    date_0 = dates[0]
+
+
+    try :
+        if date in dates:
+            print('date in dates')
+            print(date)
+    except:
+        print('date not in dates')
+        print(date)
+        return jsonify({"status": "not_found"})
+
     list_val = []
     for checkbox in x:
         print({checkbox['name']}, {checkbox['vall']})
@@ -150,7 +160,7 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
     # # print(f'{fdate=}')
     # # print(list(day.checkboxes))
     # # print(len(days))
-    return render_template('index.html', list_val=list_val, list_val_len=len(list_val), dates=dates, date=date_0,
+    return render_template('index.html', list_val=list_val, list_val_len=len(list_val), dates=dates, date=date,
                            user_id=user_id)
 
 
