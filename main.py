@@ -8,7 +8,7 @@ from pymongo import MongoClient
 
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
 HOOKURL = 'https://api.telegram.org/bot' + TOKEN + '/'
-Game_url = "https://40e3-2a01-540-5f1-6900-14d4-c16c-bfa2-a56b.ngrok.io"
+game_url = "https://40e3-2a01-540-5f1-6900-14d4-c16c-bfa2-a56b.ngrok.io"
 game_short_name = 'checklist'
 r = json
 
@@ -66,7 +66,7 @@ def sendgame(chat_id, user_id):
 def sendGameUrl(callback_query_id, user_id, date):
     qurl = HOOKURL + 'answerCallbackQuery'
     print("sendGameUrl_user_id: ", user_id)
-    URL_GAME = Game_url + f'/gm/{user_id}/{date}/'
+    URL_GAME = game_url + f'/gm/{user_id}/{date}/'
     answer = {'callback_query_id': callback_query_id, 'url': URL_GAME}
     print('answer=', answer)
     requests.post(qurl, json=answer)
@@ -121,8 +121,7 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
     dates = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
     print(dates)
 
-
-    try :
+    try:
         if date in dates:
             print('date in dates')
             print(date)
@@ -135,7 +134,6 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
     for checkbox in x:
         print({checkbox['name']}, {checkbox['vall']})
         list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
-
 
     # user = Users.parse_raw(find_by_user_id(user_id))
     # print('user=', user)
@@ -161,7 +159,7 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"
     # # print(list(day.checkboxes))
     # # print(len(days))
     return render_template('index.html', list_val=list_val, list_val_len=len(list_val), dates=dates, date=date,
-                           user_id=user_id)
+                           game_url=game_url, user_id=user_id)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -195,7 +193,7 @@ def index():
 
 
 if __name__ == '__main__':
-    wurl = HOOKURL + 'setWebhook?url=' + Game_url
+    wurl = HOOKURL + 'setWebhook?url=' + game_url
     Set = requests.get(wurl)
     print(Set)
     app.run(host="localhost", port=5003, debug=True)
