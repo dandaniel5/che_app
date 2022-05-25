@@ -8,7 +8,7 @@ from pymongo import MongoClient
 
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
 HOOKURL = 'https://api.telegram.org/bot' + TOKEN + '/'
-game_url = "https://738e-2a01-540-5f1-6900-14d4-c16c-bfa2-a56b.ngrok.io"
+game_url = "https://9ffc-178-46-119-227.ngrok.io"
 game_www_url = "https://www.738e-2a01-540-5f1-6900-14d4-c16c-bfa2-a56b.ngrok.io"
 game_short_name = 'checklist'
 r = json
