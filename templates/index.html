@@ -7,7 +7,7 @@
 <p hidden id="theId">{{user_id}}</p>
 <p hidden id="theData">{{date}}</p>
 
-
+<!--<br>-->
 <ul class="nav flex-sm-row nav-fill">
     <li class="nav-item">
     <button  type="button" id="yesterday" class="btn btn-outline-primary" onClick="window.location.reload();"> ◀️ </button>
@@ -16,10 +16,13 @@
     <li class="nav-item">
    <h3> &ensp;  </h3>
   </li>
+    <li class="nav-item">
+   <h3> &ensp;  </h3>
+  </li>
 
-<li class="nav-item">
-    <h3>Задачи на&ensp;  </h3>
-</li>
+<!--<li class="nav-item">-->
+<!--    <h3>Задачи на&ensp;  </h3>-->
+<!--</li>-->
 <!--  <li class="nav-item">-->
 <!--    <button type="button" class="btn btn-outline-primary">{{date}}</button>-->
 <!--  </li>-->
@@ -37,9 +40,9 @@
         </div>
     </li>
 
-    <li class="nav-item">
-   <h3> &ensp;  </h3>
-  </li>
+<!--    <li class="nav-item">-->
+<!--   <h3> &ensp;  </h3>-->
+<!--  </li>-->
 <!--  <li class="nav-item">-->
 <!--    <button  type="button" class="btn btn-info" onClick="window.location.reload();"> 🔄 </button>-->
 <!--  </li>-->
@@ -47,10 +50,13 @@
    <h3> &ensp;  </h3>
   </li>
     <li class="nav-item">
+   <h3> &ensp;  </h3>
+  </li>
+    <li class="nav-item">
     <button  type="button" id="tomorrow" class="btn btn-outline-primary" onClick="window.location.reload();"> ▶️ </button>
   </li>
 <!--    <li class="nav-item">-->
-<!--&lt;!&ndash;   <h3> &ensp;  </h3>&ndash;&gt;-->
+<!--   <h3> &ensp;  </h3>-->
 <!--  </li>-->
 <!--  <li class="nav-item">-->
 
@@ -61,7 +67,7 @@
 
 
 
-<br><br>
+<br>
 
 {#
 {% for dict_item in list_val %}
@@ -104,13 +110,14 @@
 
 
 <object  class="collapse multi-collapse collapse-horizontal" id="collapseWidthExample" title="удалить чекбокс" align="right" >
-   <a align="right">
-    <small>
+<!--   <a align="right">-->
+<!--    <small>-->
+      <button type="button" class="btn-close btn-sm btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+<!--        ❌-->
+        </button>
 
-        ❌
-
-    </small>
-</a>
+<!--    </small>-->
+<!--</a>-->
 </object>
 
 
