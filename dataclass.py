@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
 from pydantic import BaseModel, ValidationError, fields
 from bson.json_util import dumps, ObjectId
-import json, os ,re
+import json, os, re
+import datetime
 from pymongo import MongoClient, errors
+
 
 os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
 client = MongoClient(os.environ['MONGODB_URI'])
@@ -80,12 +82,62 @@ db = client.che_app
 #     # db.Users.find_one_and_update({"id": f"{jj[0]}" }, {"$set": {yy: day}})
 # except Exception as e:
 #     print(e)
-user_id = "219045984"
+user_id = "5197484110"
 # date = db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})
 # print(date)
 # data =[]
 # for x in date:
 #     data.append(x)
 # print(data)
-date = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
-print(date)
+# date = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
+# print(date)
+
+
+# def is_user_exist(user_id):
+#     user = db.Users.find_one({"id": f"{user_id}"})
+#     if user != None:
+#         return user
+#     else:
+#         return False
+#
+# def is_date_exist_if_not_init(user_id, date):
+#     dates = db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0}) # получаем все даты пользователя или нихуя если пользоватекля нема
+#     if dates != None: #
+#         for date in dates:
+#             if date == date:
+#                 return True
+#                 print("date exist")
+#             else:
+#                 # creaate new day
+#                 db.Users.insert_one({"id": f"{user_id}", date:({"checkboxes": [{"name": "new day", "vall": "cheked"}] }) })
+#                 print("date created")
+#     else:
+#         return False # false if user dont exist
+#
+# def init_user(user_id):
+#     today = str(datetime.datetime.date(datetime.datetime.today()))
+#     welcome_checkbox1 = {"name": "welcome to checkbox_app", "vall": "unchecked"}
+#     welcome_checkbox2 = {"name": "use it to checkbox your ass", "vall": "checked"}
+#     welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "unchecked"}
+#     new_user_day = (welcome_checkbox1, welcome_checkbox2, welcome_checkbox3)
+#
+#     user_id = is_user_exist(user_id)# if user does not exist return False else return user
+#
+#     if user_id == False: # if user does not exist create new user and new user day
+#         db.Users.insert_one({"id": f"{user_id}",today:new_user_day})
+#         print("user created")
+#         print("date also created")
+#     else: # if user exist check if date exist if not create new date(today)
+#         print("user exist")
+#         is_date_exist_if_not_init(user_id, today)
+#         print("today date created")
+
+
+dates = (db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0}))
+print(list(dates.keys()))
+# print(re.match(r'\d{4}-\d{2}-\d{2}', dates)
+
+# print(datetime.datetime.date(datetime.datetime.today()))
+# today = datetime.datetime.today()
+# print(re.match(r'\d{4}-\d{2}-\d{2}', str(today)))
+# init_user(user_id)

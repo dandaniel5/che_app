@@ -34,6 +34,11 @@
   </li>
   <li class="nav-item">
     <button  type="button" class="btn btn-info" onClick="window.location.reload();"> 🔄 </button>
+  </li><li class="nav-item">
+   <h3> &ensp;  </h3>
+  </li>
+  <li class="nav-item">
+
   </li>
 </ul>
 
@@ -48,7 +53,7 @@
    {% endfor %}
 {% endfor %}
 #}
-<div class="list-group">
+<div class="list-group" id="list-group">
     {% for i in range(list_val_len) %}{#итерируем через общее коллличество элементов в списке#}
         <label class="list-group-item" for="val{{ i+1 }}" name="val{{ i+1 }}">{#создаем лебл#}
         {#создаем чекбокс#}
@@ -59,20 +64,39 @@
                value=list_val[i]
                {#прописывем состояние чекбокса через итерирование значения словаря#}
 
-
                 {% for key, value in list_val[i].items() %}
                    {{value}}
                 {% endfor %}
-
-
         >
         {#прописывем подписи к чекбоксам через итерирование каждый словарем в списке#}
         {% for item in list_val[i] %}
             {{ item }}
         {% endfor %}
+
         </input>
-    </label>
+
+
+        </label>
     {% endfor %}
+
+     <label id="before"> </label>
+
+    <button id="plus_button"  type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="false"> ➕ </button>
+
+<div class="collapse multi-collapse" id="collapseExample">
+<!--<div class="card card-body">-->
+<!--<div class="col">-->
+    <input id="new-checkbox-text" type="text" class="form-control" placeholder="New Checklist Hear" aria-label="First name">
+
+
+<!--</div>-->
+<!--</div>-->
+</div>
+
+
+
+
+
 </div>
 
 <br><br>
@@ -82,6 +106,7 @@
 </div>
 
 
+</div>
 
 
 {% endblock %}

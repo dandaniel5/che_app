@@ -3,18 +3,19 @@ from flask_sslify import SSLify
 import requests, json, os
 from bson.json_util import dumps, ObjectId
 import re
+import datetime
 from pydantic import BaseModel, Field, ValidationError
 from pymongo import MongoClient
 
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
 HOOKURL = 'https://api.telegram.org/bot' + TOKEN + '/'
-game_url = "https://9ffc-178-46-119-227.ngrok.io"
-game_www_url = "https://www.738e-2a01-540-5f1-6900-14d4-c16c-bfa2-a56b.ngrok.io"
+game_url = "https://c0fc-2a01-540-9e9-b400-ec76-9ae0-4a10-d354.ngrok.io"
 game_short_name = 'checklist'
 r = json
 
 app = Flask(__name__)
 SSLify = SSLify(app)
+today = str(datetime.datetime.date(datetime.datetime.today()))
 
 os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
 client = MongoClient(os.environ['MONGODB_URI'])
@@ -52,9 +53,74 @@ db = client.che_app
 #     print(danil.days[0].date)
 # except ValidationError as e:
 #     print(e)
+welcome_checkbox1 = {"name": "просто новый создан день", "vall": "unchecked"}
+welcome_checkbox2 = {"name": "значть можно поставить галочку", "vall": "checked"}
+welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "checked"}
+new_day = (welcome_checkbox1, welcome_checkbox2, welcome_checkbox3)
+
+
+def is_user_exist(user_id):
+    if db.Users.find_one({"id": f"{user_id}"}) != None:
+        return True
+    else:
+        return False
+
+
+def is_date_exist(user_id, date):
+    # date = str(date)
+    print(f"{date=}" + f"{user_id=}")
+    dates = db.Users.find_one({"id": f"{user_id}"},
+                              {"id": 0, "_id": 0})  # получаем все даты пользователя или нихуя если пользоватекля нема
+    if dates != None:
+        print(dates)
+        if date in list(dates.keys()):
+            print("date exist")
+            return True
+        elif date not in list(dates.keys()):
+            print("is_date_exist date not exist")
+            return False
+    else:
+        print("user not found")
+        return None
+        # false if user dont exist
+
+
+def init_date(user_id, date):
+    print("init_date")
+    print(user_id)
+    print(date)
+
+    db.Users.update_one({"id": str(user_id)}, {"$set": {date: new_day}})
+    print("date created")
+
+
+def init_user(user_id):
+
+    welcome_checkbox1 = {"name": "welcome to checkbox_app", "vall": "unchecked"}
+    welcome_checkbox2 = {"name": "use it to checkbox your ass", "vall": "checked"}
+    welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "unchecked"}
+    new_user_day = (welcome_checkbox1, welcome_checkbox2, welcome_checkbox3)
+
+    match is_user_exist(user_id):
+        case False:  # if user does not exist create new user and new user day
+            db.Users.insert_one({"id": f"{user_id}", today: new_user_day})
+            print("user created")
+            print("date also created")
+        case True:  # if user exist check if date exist if not create new date(today)
+            print("user exist")
+            match is_date_exist(user_id, today):
+                case None:
+                    print("user not found")
+                case True:
+                    print("is_date_exist date exist")
+                case False:
+                    print("date not exist")
+                    init_date(user_id, today)
+            print("today date created")
 
 
 def sendgame(chat_id, user_id):
+    init_user(user_id)
     print('send gamestarted')
     qqurl = HOOKURL + 'sendGame'
     answer = {'chat_id': chat_id, 'game_short_name': game_short_name, 'cache_time': 20}
@@ -65,6 +131,7 @@ def sendgame(chat_id, user_id):
 
 
 def sendGameUrl(callback_query_id, user_id, date):
+    init_user(user_id)
     qurl = HOOKURL + 'answerCallbackQuery'
     print("sendGameUrl_user_id: ", user_id)
     URL_GAME = game_url + f'/gm/{user_id}/{date}/'
@@ -110,7 +177,7 @@ def front_to_back():
 
 
 @app.route('/gm/<int:user_id>/<string:date>/', methods=['GET', 'POST'])
-def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date="2022-05-19"):
+def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
     print('-----------------')
     cursor = list((db.Users.find({"id": f"{user_id}"},
                                  {"id": 0, "_id": 0})))
@@ -177,10 +244,11 @@ def index():
             callback_query_id = r['callback_query']['id']
             print(callback_query_id)
             # update_id = r['update_id']
-            user_id = r['callback_query']['from']['id']
+            user_id = int(r['callback_query']['from']['id'])
             # регуляркой дотсаем все даты из монго джейсона по юзер айди
             date = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
-            sendGameUrl(callback_query_id, user_id, date[0])
+            day = str(datetime.datetime.date(datetime.datetime.today()))
+            sendGameUrl(callback_query_id, user_id, day)
             return jsonify({"status": "nice"})
 
         elif 'message' in r:
@@ -189,6 +257,9 @@ def index():
                 print('send game')
                 user_id = r['message']['from']['id']
                 # print(r)
+                # проверить есть ли юзер айди в базе , если нет то добавить и создать календарь
+                # с сегодняшним днем и добавить в него первую записть "зарегаться в приложениии ЧЕКЕД"
+                # и вторым чеклистом "Поставить первую галоку АНЧЕКЕД
                 sendgame(chat_id, user_id)
     return render_template("base.html")
 

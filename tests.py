@@ -1,10 +1,10 @@
-# import pymongo
+import pymongo
 # from bson.objectid import ObjectId
 # from bson.json_util import dumps
 # import bson.json_util
 #
-# client = pymongo.MongoClient("mongodb://localhost:27017/")
-# db = client.TestUser
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = client.Users
 #
 # users = db.TestUsers
 # calendar = db.TestUsers.calendar
@@ -28,5 +28,5 @@
 # # print(data_user)
 # #
 # # print(find_by_user_id(222))
-a,d,*c =[1,2,3,4,5,6,7,8,9,10]
-print(a,d,c)
+# a,d,*c =[1,2,3,4,5,6,7,8,9,10]
+# print(a,d,c)
