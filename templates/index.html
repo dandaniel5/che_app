@@ -79,11 +79,7 @@
 <div class="list-group" id="list-group">
     {% for i in range(list_val_len) %}{#итерируем через общее коллличество элементов в списке#}
 
-    <label class="list-group-item" for="val{{ i+1 }}" name="val{{ i+1 }}">{#создаем лебл#}
-
-
-
-
+    <label class="collapse show list-group-item" for="val{{ i+1 }}" name="val{{ i+1 }}" id="label{{ i+1 }}">{#создаем лебл#}
 
 
 
@@ -112,7 +108,7 @@
 <object  class="collapse multi-collapse collapse-horizontal" id="collapseWidthExample" title="удалить чекбокс" align="right" >
 <!--   <a align="right">-->
 <!--    <small>-->
-      <button type="button" class="btn-close btn-sm btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+      <button type="button" class="btn-close btn-sm btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#label{{ i+1 }}" aria-expanded="true" aria-controls="label{{ i+1 }}">
 <!--        ❌-->
         </button>
 
