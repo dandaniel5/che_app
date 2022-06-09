@@ -10,7 +10,8 @@
 <!--<br>-->
 <ul class="nav flex-sm-row nav-fill">
     <li class="nav-item">
-    <button  type="button" id="yesterday" class="btn btn-outline-primary" onClick="window.location.reload();"> ◀️ </button>
+    <button  type="button" id="yesterday" class="btn btn-outline-primary" onclick="location.href='{{game_url}}/gm/{{user_id}}/{{yesterday}}'"
+    > ◀️ </button>
   </li>
 
     <li class="nav-item">
@@ -53,7 +54,10 @@
    <h3> &ensp;  </h3>
   </li>
     <li class="nav-item">
-    <button  type="button" id="tomorrow" class="btn btn-outline-primary" onClick="window.location.reload();"> ▶️ </button>
+    <button  type="button" id="tomorrow" class="btn btn-outline-primary"
+
+    onclick="location.href='{{game_url}}/gm/{{user_id}}/{{tomorrow}}'"
+    > ▶️ </button>
   </li>
 <!--    <li class="nav-item">-->
 <!--   <h3> &ensp;  </h3>-->

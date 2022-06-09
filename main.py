@@ -15,7 +15,22 @@ r = json
 
 app = Flask(__name__)
 SSLify = SSLify(app)
-today = str(datetime.datetime.date(datetime.datetime.today()))
+today = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=0)))
+yesterday = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=-1)))
+tomorrow = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=1)))
+
+def date_str_to_datatime_obl(dates):
+    dayy = dates.split('-')
+    return datetime.date(int(dayy[0]), int(dayy[1]), int(dayy[2]))
+
+
+def next_day(day):
+    return date_str_to_datatime_obl(day) + datetime.timedelta(days=+1)
+def prev_day(day):
+    return date_str_to_datatime_obl(day) + datetime.timedelta(days=-1)
+
+
+
 
 os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
 client = MongoClient(os.environ['MONGODB_URI'])
@@ -54,8 +69,8 @@ db = client.che_app
 # except ValidationError as e:
 #     print(e)
 welcome_checkbox1 = {"name": "просто новый создан день", "vall": "unchecked"}
-welcome_checkbox2 = {"name": "значть можно поставить галочку", "vall": "checked"}
-welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "checked"}
+welcome_checkbox2 = {"name": "значть можно поставить галочку", "vall": "unchecked"}
+welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "unchecked"}
 new_day = (welcome_checkbox1, welcome_checkbox2, welcome_checkbox3)
 
 
@@ -179,12 +194,23 @@ def front_to_back():
 @app.route('/gm/<int:user_id>/<string:date>/', methods=['GET', 'POST'])
 def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
     print('-----------------')
-    cursor = list((db.Users.find({"id": f"{user_id}"},
-                                 {"id": 0, "_id": 0})))
-    for cu in cursor:
-        calendar = cu
-    x = (calendar[date])
-    print(x)
+
+    try:
+        cursor = list((db.Users.find({"id": f"{user_id}"},
+                                     {"id": 0, "_id": 0})))
+        for cu in cursor:
+            calendar = cu
+        x = (calendar[date])
+        print(x)
+    except:
+
+        init_date(user_id,date)
+
+        cursor = list((db.Users.find({"id": f"{user_id}"},
+                                     {"id": 0, "_id": 0})))
+        for cu in cursor:
+            calendar = cu
+        x = (calendar[date])
 
     dates = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
     print(dates)
@@ -193,7 +219,10 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
         if date in dates:
             print('date in dates')
             print(date)
-    except:
+            print(next_day(date))
+
+    except Exception as e:
+        print(e)
         print('date not in dates')
         print(date)
         return jsonify({"status": "not_found"})
@@ -202,6 +231,10 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
     for checkbox in x:
         print({checkbox['name']}, {checkbox['vall']})
         list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
+
+
+
+
 
     # user = Users.parse_raw(find_by_user_id(user_id))
     # print('user=', user)
@@ -226,7 +259,7 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
     # # print(f'{fdate=}')
     # # print(list(day.checkboxes))
     # # print(len(days))
-    return render_template('index.html', list_val=list_val, list_val_len=len(list_val), dates=dates, date=date,
+    return render_template('index.html',yesterday=prev_day(date),tomorrow=next_day(date) , list_val=list_val, list_val_len=len(list_val), dates=dates, date=date,
                            game_url=game_url, user_id=user_id)
 
 
@@ -265,6 +298,7 @@ def index():
 
 
 if __name__ == '__main__':
+
     wurl = HOOKURL + 'setWebhook?url=' + game_url
     Set = requests.get(wurl)
     print(Set)

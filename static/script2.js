@@ -6,6 +6,14 @@ let value3 = document.getElementById("new-checkbox-text").value;
 
 let isExpanded = document.getElementById("collapseExample").className;
 let counter = 0;
+// $('#yesterday').click(function () {
+//     сonsole.log(window.location.href);
+//     // window.location='http://www.example.com';
+// });
+// $('#tomorrow').click(function () {
+//
+// });
+
 
 $('.btn-close').click(function () {
 
