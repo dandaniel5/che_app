@@ -1,14 +1,22 @@
+// document.querySelectorAll('[href^="http:"')
+//     .forEach(el => {el.href = el.href.replace(/^http/, 'https')});
+// document.querySelectorAll('[src^="http:"')
+//     .forEach(el => {el.src = el.src.replace(/^http/, 'https')});
+
+
 
 jQuery('document').ready(function () {
 let value1 = document.getElementById("theId").innerHTML;
 let value2 = document.getElementById("theData").innerHTML;
 let value3 = document.getElementById("new-checkbox-text").value;
 
+
+
 let isExpanded = document.getElementById("collapseExample").className;
 let counter = 0;
 // $('#yesterday').click(function () {
-//     сonsole.log(window.location.href);
-//     // window.location='http://www.example.com';
+//     // сonsole.log(window.location.href);
+//     location.href='{{yesterday_link}}';
 // });
 // $('#tomorrow').click(function () {
 //

@@ -5,13 +5,23 @@
 {% endblock %}
 {% block body %}
 <p hidden id="theId">{{user_id}}</p>
+
 <p hidden id="theData">{{date}}</p>
+
+
 
 <!--<br>-->
 <ul class="nav flex-sm-row nav-fill">
     <li class="nav-item">
-    <button  type="button" id="yesterday" class="btn btn-outline-primary" onclick="location.href='{{game_url}}/gm/{{user_id}}/{{yesterday}}'"
-    > ◀️ </button>
+    <button  type="button" id="yesterday" class="btn btn-outline-primary"
+             onclick="location.href='{{yesterday_link}}'"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5zM10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5z"/>
+</svg>
+
+
+     </button>
   </li>
 
     <li class="nav-item">
@@ -34,14 +44,27 @@
                 {{date}}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                {% for day in dates %}
-                <li><a class="dropdown-item" href="{{game_url}}/gm/{{user_id}}/{{day}}">{{day}}</a></li>
+                {% for day in link_list %}
+
+                <li><a class="dropdown-item" onclick="location.href='{{day}}'">
+
+
+                    <script>
+var str = "{{day}}";
+document.writeln(str.slice(-11,-1));
+</script>
+
+                </a></li>
                 {% endfor %}
+<!--                {% for key, value in link_dict%}-->
+<!--                <li><a class="dropdown-item" onclick="location.href='{{value}}'">{{key}}</a></li>-->
+<!--                {% endfor %}-->
+
             </ul>
         </div>
     </li>
 
-<!--    <li class="nav-item">-->
+
 <!--   <h3> &ensp;  </h3>-->
 <!--  </li>-->
 <!--  <li class="nav-item">-->
@@ -56,8 +79,13 @@
     <li class="nav-item">
     <button  type="button" id="tomorrow" class="btn btn-outline-primary"
 
-    onclick="location.href='{{game_url}}/gm/{{user_id}}/{{tomorrow}}'"
-    > ▶️ </button>
+    onclick="location.href='{{tomorrow_link}}'"
+    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8zm-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5z"/>
+</svg>
+
+    </button>
   </li>
 <!--    <li class="nav-item">-->
 <!--   <h3> &ensp;  </h3>-->
@@ -72,6 +100,7 @@
 
 
 <br>
+
 
 {#
 {% for dict_item in list_val %}
@@ -138,7 +167,9 @@
 <!--</div>-->
 <!--</div>-->
 </div>
-
+<!--<h3>game_link</h3>-->
+<!--<h3>{{game_url}}</h3>-->
+<!--<h3>{{game_url}}/gm/{{user_id}}/{{yesterday}}</h3>-->
 
 
 
@@ -153,6 +184,8 @@
 
 
 </div>
+
+
 
 
 {% endblock %}

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sslify import SSLify
+from flask_talisman import Talisman
 import requests, json, os
 from bson.json_util import dumps, ObjectId
 import re
@@ -9,15 +10,29 @@ from pymongo import MongoClient
 
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
 HOOKURL = 'https://api.telegram.org/bot' + TOKEN + '/'
-game_url = "https://c0fc-2a01-540-9e9-b400-ec76-9ae0-4a10-d354.ngrok.io"
+game_url = "https://4d04-2a01-540-45d-4800-c94-86d9-253f-cca5.ngrok.io"
 game_short_name = 'checklist'
 r = json
 
 app = Flask(__name__)
+# Talisman(app)
 SSLify = SSLify(app)
+# @app.before_request
+# def before_request():
+#     if app.env == "development":
+#         return
+#     if request.is_secure:
+#         return
+#
+#     url = request.url.replace("http://", "https://", 1)
+#     code = 301
+#     return redirect(url, code=code)
+
+
 today = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=0)))
 yesterday = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=-1)))
 tomorrow = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=1)))
+
 
 def date_str_to_datatime_obl(dates):
     dayy = dates.split('-')
@@ -26,16 +41,15 @@ def date_str_to_datatime_obl(dates):
 
 def next_day(day):
     return date_str_to_datatime_obl(day) + datetime.timedelta(days=+1)
+
+
 def prev_day(day):
     return date_str_to_datatime_obl(day) + datetime.timedelta(days=-1)
-
-
 
 
 os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
 client = MongoClient(os.environ['MONGODB_URI'])
 db = client.che_app
-
 
 # def find_by_user_id(id):
 #     col = db.users
@@ -110,7 +124,6 @@ def init_date(user_id, date):
 
 
 def init_user(user_id):
-
     welcome_checkbox1 = {"name": "welcome to checkbox_app", "vall": "unchecked"}
     welcome_checkbox2 = {"name": "use it to checkbox your ass", "vall": "checked"}
     welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "unchecked"}
@@ -204,7 +217,7 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
         print(x)
     except:
 
-        init_date(user_id,date)
+        init_date(user_id, date)
 
         cursor = list((db.Users.find({"id": f"{user_id}"},
                                      {"id": 0, "_id": 0})))
@@ -232,10 +245,6 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
         print({checkbox['name']}, {checkbox['vall']})
         list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
 
-
-
-
-
     # user = Users.parse_raw(find_by_user_id(user_id))
     # print('user=', user)
     # days = list(get_days_by_user_id(user_id))
@@ -259,8 +268,32 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
     # # print(f'{fdate=}')
     # # print(list(day.checkboxes))
     # # print(len(days))
-    return render_template('index.html',yesterday=prev_day(date),tomorrow=next_day(date) , list_val=list_val, list_val_len=len(list_val), dates=dates, date=date,
-                           game_url=game_url, user_id=user_id)
+    yesterday_link = f' {game_url}/gm/{user_id}/{prev_day(date)}/'
+    tomorrow_link = f' {game_url}/gm/{user_id}/{next_day(date)}/'
+
+    link_dict = {}
+    link_list = []
+    for day in dates:
+        link_list.append(f' {game_url}/gm/{user_id}/{day}/')
+        day_link = (f'{game_url}/gm/{user_id}/{day}/')
+        link_dict.update({day:day_link})
+    print(f'{link_dict=}')
+
+
+
+    return render_template('index.html',
+                           # link_dict=link_dict,
+                           link_list=link_list,
+                           tomorrow_link=tomorrow_link,
+                           yesterday_link=yesterday_link,
+                           yesterday=prev_day(date),
+                           tomorrow=next_day(date),
+                           list_val=list_val,
+                           list_val_len=len(list_val),
+                           dates=dates,
+                           date=date,
+                           game_url=game_url,
+                           user_id=user_id)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -298,7 +331,6 @@ def index():
 
 
 if __name__ == '__main__':
-
     wurl = HOOKURL + 'setWebhook?url=' + game_url
     Set = requests.get(wurl)
     print(Set)
