@@ -1,11 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_sslify import SSLify
-from flask_talisman import Talisman
 import requests, json, os
-from bson.json_util import dumps, ObjectId
 import re
 import datetime
-from pydantic import BaseModel, Field, ValidationError
 from pymongo import MongoClient
 
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
@@ -15,24 +12,11 @@ game_short_name = 'checklist'
 r = json
 
 app = Flask(__name__)
-# Talisman(app)
 SSLify = SSLify(app)
-# @app.before_request
-# def before_request():
-#     if app.env == "development":
-#         return
-#     if request.is_secure:
-#         return
-#
-#     url = request.url.replace("http://", "https://", 1)
-#     code = 301
-#     return redirect(url, code=code)
-
 
 today = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=0)))
 yesterday = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=-1)))
 tomorrow = str(datetime.datetime.date(datetime.datetime.today() + datetime.timedelta(days=1)))
-
 
 def date_str_to_datatime_obl(dates):
     dayy = dates.split('-')
@@ -51,37 +35,7 @@ os.environ['MONGODB_URI'] = 'mongodb://localhost:27017/'
 client = MongoClient(os.environ['MONGODB_URI'])
 db = client.che_app
 
-# def find_by_user_id(id):
-#     col = db.users
-#     cursor = col.find({"id": id})
-#     # list_cur =
-#     for cu in cursor:
-#         list_cur = cu
-#     json_data = dumps(list_cur)
-#     # print(json_data)
-#     return json_data
 
-
-# class Checkbox(BaseModel):
-#     name: str = None
-#     vall: str = None
-
-
-# class Users(BaseModel):
-#     _id: ObjectId
-#     id: str
-
-
-# def get_days_by_user_id(id):
-#     user = Users.parse_raw(find_by_user_id(id))
-#     return (user.days)
-
-
-# try:
-#     danil = Users.parse_raw(find_by_user_id(219045984))
-#     print(danil.days[0].date)
-# except ValidationError as e:
-#     print(e)
 welcome_checkbox1 = {"name": "просто новый создан день", "vall": "unchecked"}
 welcome_checkbox2 = {"name": "значть можно поставить галочку", "vall": "unchecked"}
 welcome_checkbox3 = {"name": "RANDOM TEXT3", "vall": "unchecked"}
@@ -187,21 +141,9 @@ def front_to_back():
     for x in range(0, len(checkboxes), 2):
         checkboxes_4_mongo.append({'name': checkboxes[x], 'vall': checkboxes[x + 1]})
     print(checkboxes_4_mongo)
-    # dayz=[]
-    # for y in range(0, len(day),2):
-    #     dayz.append({day[y]: day[y+1]})
-    # print(dayz)
     db.Users.update_one({"id": f"{id}"}, {"$set": {f"{date}": checkboxes_4_mongo}})
-    # db.Users.find_one_and_update({"id": f"{jj[0]}"}, {"$set": {f"{jj[1]}": day}})
     print('ok')
     return jsonify({"status": "nice"})
-
-    # @app.route('/gm', methods=['GET', 'POST'])
-    # def send_json_to_front():
-    #     with open("data.json") as jsonFile:
-    #         jsonObject = json.load(jsonFile)
-    #         jsonFile.close()
-    #     return render_template('index.html', list_val=jsonObject, list_val_len=len(jsonObject))
 
 
 @app.route('/gm/<int:user_id>/<string:date>/', methods=['GET', 'POST'])
@@ -245,44 +187,16 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
         print({checkbox['name']}, {checkbox['vall']})
         list_val.append({f'{checkbox["name"]}': f'{checkbox["vall"]}'})
 
-    # user = Users.parse_raw(find_by_user_id(user_id))
-    # print('user=', user)
-    # days = list(get_days_by_user_id(user_id))
-    # print(f'{days=}')
-    # for day in days:
-    #     print(f'{day=}')
-    #     if day.date == date:
-    #         fdate = day.date
-    #         print(f'{fdate=}')
-    #         checkboxes = day.checkboxes
-    # print(f'{checkboxes=}')
-    # print('----------------')
-    # # print(f'{checkboxes=}')
-    # list_val = []
-    # for checkbox in checkboxes:
-    #     print({f'{checkbox.name}:{checkbox.vall}'})
-    #     list_val.append({f'{checkbox.name}': f'{checkbox.vall}'})
-    #
-    # print(f'{list_val=}')
-    #
-    # # print(f'{fdate=}')
-    # # print(list(day.checkboxes))
-    # # print(len(days))
     yesterday_link = f' {game_url}/gm/{user_id}/{prev_day(date)}/'
     tomorrow_link = f' {game_url}/gm/{user_id}/{next_day(date)}/'
 
-    link_dict = {}
     link_list = []
     for day in dates:
         link_list.append(f' {game_url}/gm/{user_id}/{day}/')
-        day_link = (f'{game_url}/gm/{user_id}/{day}/')
-        link_dict.update({day:day_link})
-    print(f'{link_dict=}')
 
 
 
     return render_template('index.html',
-                           # link_dict=link_dict,
                            link_list=link_list,
                            tomorrow_link=tomorrow_link,
                            yesterday_link=yesterday_link,
@@ -299,7 +213,6 @@ def send_json_to_front_from_mongo_by_user_id_and_date(user_id, date):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     print('START')
-    # global r
     r = request.get_json()
     print(r)
 
@@ -309,7 +222,6 @@ def index():
             print(r)
             callback_query_id = r['callback_query']['id']
             print(callback_query_id)
-            # update_id = r['update_id']
             user_id = int(r['callback_query']['from']['id'])
             # регуляркой дотсаем все даты из монго джейсона по юзер айди
             date = re.findall(r'\d{4}-\d{2}-\d{2}', str(db.Users.find_one({"id": f"{user_id}"}, {"id": 0, "_id": 0})))
@@ -322,7 +234,6 @@ def index():
                 chat_id = r['message']['chat']['id']
                 print('send game')
                 user_id = r['message']['from']['id']
-                # print(r)
                 # проверить есть ли юзер айди в базе , если нет то добавить и создать календарь
                 # с сегодняшним днем и добавить в него первую записть "зарегаться в приложениии ЧЕКЕД"
                 # и вторым чеклистом "Поставить первую галоку АНЧЕКЕД
