@@ -8,6 +8,7 @@ from pymongo import MongoClient
 TOKEN = '5320542317:AAEd4A4lsBXyzYPXcl6ubw2j-mdVZz1rbj0'
 HOOKURL = 'https://api.telegram.org/bot' + TOKEN + '/'
 game_url = "https://4d04-2a01-540-45d-4800-c94-86d9-253f-cca5.ngrok.io"
+Web_port = os.environ.get('PORT', 5000)
 game_short_name = 'checklist'
 r = json
 
@@ -246,3 +247,13 @@ if __name__ == '__main__':
     Set = requests.get(wurl)
     print(Set)
     app.run(host="localhost", port=5003, debug=True)
+
+if __name__ == '__app__':
+    print('name = main')
+    wurl = HOOKURL + 'setWebhook?url=' + Web_port
+    print('concatonate')
+    Set = requests.get(wurl)
+    print(Set)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0:17814', port=port)
+    print('exit flask')
